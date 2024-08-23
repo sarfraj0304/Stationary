@@ -9,7 +9,7 @@ const cors = require("cors");
 app.use(express.json());
 
 const config = {
-  origin: [/localhost:\d{4}$/],
+  origin: [/localhost:\d{4}$/, 'https://stationary-frontend-lyart.vercel.app'],
   optionsSuccessStatus: 200,
 };
 
