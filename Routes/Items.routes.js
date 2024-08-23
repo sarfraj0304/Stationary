@@ -37,7 +37,7 @@ ItemRouter.post("/create-item", async (req, res) => {
 // Update Item
 ItemRouter.put("/update-item/:id", async (req, res) => {
   try {
-    const { name, quantity } = req.body;
+    const { name, quantity, actualQuantity } = req.body;
     if (!name) {
       res.status(400).json({ statusCode: 400, msg: "Name not found" });
     } else if (!quantity) {
@@ -48,6 +48,7 @@ ItemRouter.put("/update-item/:id", async (req, res) => {
       {
         name,
         quantity,
+        actualQuantity,
       }
     );
     res.status(200).json({ statusCode: 200, msg: "Item Updated Successfully" });
