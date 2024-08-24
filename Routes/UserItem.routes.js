@@ -6,8 +6,9 @@ const UserItemRouter = Router();
 
 // get User Item
 UserItemRouter.get("/user-item-get", async (req, res) => {
-  const { userUid, date } = req?.query;
+  const { userUid, date, itemUid } = req?.query;
   const items = await ItemModel.find();
+
   function transformedUsers(userItems) {
     return userItems.map((el) => ({
       ...el.toObject(), // Convert Mongoose document to plain object
@@ -18,36 +19,25 @@ UserItemRouter.get("/user-item-get", async (req, res) => {
       })),
     }));
   }
+
   try {
-    if (userUid && !date) {
-      const userItems = await UserItemModel.find({ user: userUid }).populate(
-        "user"
+    let filter = {};
+
+    // Build the filter based on the provided query parameters
+    if (userUid) {
+      filter.user = userUid;
+    }
+    if (date) {
+      filter.date = date;
+    }
+
+    let userItems = await UserItemModel.find(filter).populate("user");
+
+    if (itemUid) {
+      userItems = userItems.filter((item) =>
+        item.items.some((i) => i.itemUid === itemUid)
       );
-
-      return res
-        .status(200)
-        .json({ statusCode: 200, data: transformedUsers(userItems) });
     }
-    if (date && !userUid) {
-      const userItems = await UserItemModel.find({ date: date }).populate(
-        "user"
-      );
-
-      return res
-        .status(200)
-        .json({ statusCode: 200, data: transformedUsers(userItems) });
-    }
-    if (date && userUid) {
-      const userItems = await UserItemModel.find({
-        date: date,
-        user: userUid,
-      }).populate("user");
-
-      return res
-        .status(200)
-        .json({ statusCode: 200, data: transformedUsers(userItems) });
-    }
-    const userItems = await UserItemModel.find().populate("user");
 
     return res
       .status(200)
